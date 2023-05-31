@@ -1,4 +1,4 @@
-const myfile = require("./productInfo.json");
+const myfile = require("./db/productInfo.json");
 const fs = require("fs");
 
 function handleGetMethod(req, res) {
@@ -136,7 +136,7 @@ const createProduct = (req, res) => {
 
   // console.log(id, price, title, category, description, image);
 
-  fs.readFile(__dirname + "/productInfo.json", "utf8", function (err, data) {
+  fs.readFile(__dirname + "/db/productInfo.json", "utf8", function (err, data) {
     if (err) throw err;
 
     console.log(data, "data data", req.body);
@@ -151,7 +151,7 @@ const createProduct = (req, res) => {
 };
 
 function getAllProducts(req, res) {
-  fs.readFile(__dirname + "/productInfo.json", "utf8", function (err, data) {
+  fs.readFile(__dirname + "/db/productInfo.json", "utf8", function (err, data) {
     if (err) throw err;
     res.send(JSON.parse(data));
   });
@@ -160,7 +160,7 @@ function getAllProducts(req, res) {
 function getProductById(req, res) {
   const pId = req.params.pId;
  
-  fs.readFile(__dirname + "/productInfo.json", "utf8", function (err, data) {
+  fs.readFile(__dirname + "/db/productInfo.json", "utf8", function (err, data) {
     if (err) throw err;
 
     const productsData = JSON.parse(data);

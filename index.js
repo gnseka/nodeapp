@@ -46,10 +46,44 @@ app.get("/download", function (req, res) {
 });
 
 app.get("/myfile", (req, res) => {
-  fs.readFile(__dirname + "/productInfo.json", "utf8", function (err, data) {
+  fs.readFile(__dirname + "/db/productInfo.json", "utf8", function (err, data) {
     if (err) throw err;
-    console.log(data,"data data");
     res.send(data);
+  });
+});
+
+app.post("/signup", (req, res) => {
+  var existingUser = [];
+  fs.readFile(__dirname + "/db/signup.json", "utf8", function (err, data) {
+    if (err) throw err;
+    existingUser = [...JSON.parse(data), req.body];
+    var writer = fs.createWriteStream("./db/signup.json");
+    writer.write(JSON.stringify(existingUser));
+    res.send(existingUser);
+  });
+});
+
+app.get("/login", (req, res) => {
+  const username = req.query.username;
+  const password = req.query.password;
+
+  fs.readFile(__dirname + "/db/signup.json", "utf8", function (err, data) {
+    if (err) return err;
+    const myDB = JSON.parse(data);
+    let isValid = false;
+
+    myDB.forEach((element) => {
+      if (element.username === username && element.password === password) {
+        isValid = true;
+        res.send("login success");
+        res.end();
+      }
+    });
+
+    if (!isValid) {
+      res.send("login fail");
+      res.end();
+    }
   });
 });
 
