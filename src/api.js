@@ -1,10 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const app = express();
-
+const serverless = require("serverless-http");
 const fs = require("fs");
 
 const handlers = require("./handlers");
+
+const app = express();
+const router = express.Router();
+
+app.use("/.netlify/functions/api", router);
 
 app.use(
   bodyParser.urlencoded({
@@ -19,40 +23,40 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.text());
 
-app.get("/", (req, res) => {
+router.get("/", (req, res) => {
   res.send("server running success");
 });
 
-app.get("/form", handlers.handleGetMethod);
-app.get("/users/:username", handlers.handleUser);
+router.get("/form", handlers.handleGetMethod);
+router.get("/users/:username", handlers.handleUser);
 
-app.get("/product/:productId", handlers.handleProduct);
+router.get("/product/:productId", handlers.handleProduct);
 
-app.get("/products/categories", handlers.handleCategories);
+router.get("/products/categories", handlers.handleCategories);
 
-app.get("/updatecolor", handlers.updatecolor);
+router.get("/updatecolor", handlers.updatecolor);
 
-app.post("/createProduct", handlers.createProduct);
+router.post("/createProduct", handlers.createProduct);
 
-app.get("/getAllProducts", handlers.getAllProducts);
+router.get("/getAllProducts", handlers.getAllProducts);
 
-app.get("/getProductById/:pId", handlers.getProductById);
+router.get("/getProductById/:pId", handlers.getProductById);
 
-app.get("/download", function (req, res) {
+router.get("/download", function (req, res) {
   const file = `${__dirname}/videos/sample.mp4`;
   res.download(file);
   res.statusCode = 200;
   res.end("file download success");
 });
 
-app.get("/myfile", (req, res) => {
-  fs.readFile(__dirname + "/db/productInfo.json", "utf8", function (err, data) {
+router.get("/myfile", (req, res) => {
+  fs.readFile(__dirname + "./db/productInfo.json", "utf8", function (err, data) {
     if (err) throw err;
     res.send(data);
   });
 });
 
-app.post("/signup", (req, res) => {
+router.post("/signup", (req, res) => {
   var existingUser = [];
   fs.readFile(__dirname + "/db/signup.json", "utf8", function (err, data) {
     if (err) throw err;
@@ -63,7 +67,7 @@ app.post("/signup", (req, res) => {
   });
 });
 
-app.get("/login", (req, res) => {
+router.get("/login", (req, res) => {
   const username = req.query.username;
   const password = req.query.password;
 
@@ -75,19 +79,23 @@ app.get("/login", (req, res) => {
     myDB.forEach((element) => {
       if (element.username === username && element.password === password) {
         isValid = true;
-         res.send("login success");
-         res.end();
+        res.send("login success");
+        res.end();
       }
     });
 
-     if (!isValid) {
-       console.log(isValid,"isValid isValid");
-       res.send("login fail");
-       res.end();
-     }
+    if (!isValid) {
+      console.log(isValid, "isValid isValid");
+      res.send("login fail");
+      res.end();
+    }
   });
 });
 
-app.listen(3001, () => {
-  console.log("Server Started Sucess");
-});
+// app.listen(3001, () => {
+//   console.log("Server Started Sucess");
+// });
+
+
+module.exports = app;
+module.exports.handler = serverless(app);
