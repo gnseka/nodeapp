@@ -75,15 +75,16 @@ app.get("/login", (req, res) => {
     myDB.forEach((element) => {
       if (element.username === username && element.password === password) {
         isValid = true;
-        res.send("login success");
-        res.end();
+         res.send("login success");
+         res.end();
       }
     });
 
-    if (!isValid) {
-      res.send("login fail");
-      res.end();
-    }
+     if (!isValid) {
+       console.log(isValid,"isValid isValid");
+       res.send("login fail");
+       res.end();
+     }
   });
 });
 

@@ -142,7 +142,7 @@ const createProduct = (req, res) => {
     console.log(data, "data data", req.body);
     const newProdcuts = [...JSON.parse(data), req.body];
 
-    var writer = fs.createWriteStream("productInfo.json");
+    var writer = fs.createWriteStream("/db/productInfo.json");
     writer.write(JSON.stringify(newProdcuts));
     res.send(newProdcuts);
   });
